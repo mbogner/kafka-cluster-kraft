@@ -1,0 +1,75 @@
+version: "3.8"
+services:
+  kafka1:
+    build: context
+    image: kafka-cluster-kraft:latest
+    container_name: kafka1
+    environment:
+      KAFKA_CLUSTER_ID: nvPKelh1SLGGb8YG0k-9lQ
+      BROKER_RACK: local
+      KAFKA_HOSTNAME: kafka1
+      NODE_ID: 1
+      KAFKA_PORT: 9192
+      CONTROLLER_PORT: 9193
+      EXTERNAL_PORT: 9194
+      CONTROLLER_QUORUM_VOTERS: 1@kafka1:9193,2@kafka2:9293,3@kafka3:9393
+      NUM_PARTITIONS: 5
+      OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      TRANSACTION_STATE_LOG_MIN_ISR: 2
+      DEFAULT_REPLICATION_FACTOR: 3
+    ports:
+      - "127.0.0.1:9194:9194"
+  kafka2:
+    build: context
+    image: kafka-cluster-kraft:latest
+    container_name: kafka2
+    environment:
+      KAFKA_CLUSTER_ID: nvPKelh1SLGGb8YG0k-9lQ
+      BROKER_RACK: local
+      KAFKA_HOSTNAME: kafka2
+      NODE_ID: 2
+      KAFKA_PORT: 9292
+      CONTROLLER_PORT: 9293
+      EXTERNAL_PORT: 9294
+      CONTROLLER_QUORUM_VOTERS: 1@kafka1:9193,2@kafka2:9293,3@kafka3:9393
+      NUM_PARTITIONS: 5
+      OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      TRANSACTION_STATE_LOG_MIN_ISR: 2
+      DEFAULT_REPLICATION_FACTOR: 3
+    ports:
+      - "127.0.0.1:9294:9294"
+  kafka3:
+    build: context
+    image: kafka-cluster-kraft:latest
+    container_name: kafka3
+    environment:
+      KAFKA_CLUSTER_ID: nvPKelh1SLGGb8YG0k-9lQ
+      BROKER_RACK: local
+      KAFKA_HOSTNAME: kafka3
+      NODE_ID: 3
+      KAFKA_PORT: 9392
+      CONTROLLER_PORT: 9393
+      EXTERNAL_PORT: 9394
+      CONTROLLER_QUORUM_VOTERS: 1@kafka1:9193,2@kafka2:9293,3@kafka3:9393
+      NUM_PARTITIONS: 5
+      OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      TRANSACTION_STATE_LOG_MIN_ISR: 2
+      DEFAULT_REPLICATION_FACTOR: 3
+    ports:
+      - "127.0.0.1:9394:9394"
+  kafdrop: # http://localhost:9000
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    ports:
+      - "127.0.0.1:9000:9000"
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    environment:
+      KAFKA_BROKERCONNECT: kafka1:9194,kafka2:9294,kafka3:9394
+      JVM_OPTS: "-Xms48M -Xmx96M"
+      SERVER_SERVLET_CONTEXTPATH: "/"

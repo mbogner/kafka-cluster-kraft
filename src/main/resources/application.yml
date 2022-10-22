@@ -1,0 +1,6 @@
+spring:
+  kafka:
+    consumer:
+      group-id: cgroup1
+      auto-offset-reset: earliest
+    bootstrap-servers: kafka1:9194,kafka2:9294,kafka3:9394
